@@ -14,7 +14,7 @@ import java.util.Properties;
 
 public class Util {
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/users_table?useSSL=false&allowMultiQueries=true&serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/users_table";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "Ghbynth_vjybnjh_99";
     private static final String DB_DIALECT = "org.hibernate.dialect.MySQL5Dialect";
@@ -37,27 +37,29 @@ public class Util {
     }
 
     public static SessionFactory getSessionFactory() {
-        try {
-            Properties properties = new Properties();
-            properties.put(Environment.DRIVER, DB_DRIVER);
-            properties.put(Environment.URL, DB_URL);
-            properties.put(Environment.USER, DB_USER);
-            properties.put(Environment.PASS, DB_PASSWORD);
-            properties.put(Environment.DIALECT, DB_DIALECT);
-            properties.put(Environment.SHOW_SQL, SHOW_SQL);
-            properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, CURRENT_SESSION_CONTEXT_CLASS);
-            properties.put(Environment.HBM2DDL_AUTO, HBM2DDL_AUTO);
+        if (sessionFactory == null) {
+            try {
+                Properties properties = new Properties();
+                properties.put(Environment.DRIVER, DB_DRIVER);
+                properties.put(Environment.URL, DB_URL);
+                properties.put(Environment.USER, DB_USER);
+                properties.put(Environment.PASS, DB_PASSWORD);
+                properties.put(Environment.DIALECT, DB_DIALECT);
+                properties.put(Environment.SHOW_SQL, SHOW_SQL);
+                properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, CURRENT_SESSION_CONTEXT_CLASS);
+                properties.put(Environment.HBM2DDL_AUTO, HBM2DDL_AUTO);
 
-            Configuration configuration = new Configuration();
-            configuration.setProperties(properties);
-            configuration.addAnnotatedClass(User.class);
+                Configuration configuration = new Configuration();
+                configuration.setProperties(properties);
+                configuration.addAnnotatedClass(User.class);
 
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
+                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                        .applySettings(configuration.getProperties()).build();
 
-            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-        } catch (Exception e) {
-            e.printStackTrace();
+                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return sessionFactory;
     }
